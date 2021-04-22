@@ -4,15 +4,23 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.example</groupId>
-    <artifactId>microserives</artifactId>
+    <groupId>lk.ac.sjp.foe.co4353.g5</groupId>
+    <artifactId>microservices-demo</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <name>microservices-demo</name>
+    <description>Demo project with micro-services</description>
+
     <modules>
-        <module>erurekaserver</module>
-        <module>gateway</module>
-        <module>service_1</module>
-        <module>service_2</module>
-        <module>service_3</module>
+        <module>discovery-service</module>
+        <module>question-service</module>
+        <module>answer-service</module>
+        <module>vote-service</module>
+        <module>user-service</module>
+        <module>reputation-service</module>
+
+        <!-- note that zuul will be deprecated -->
+        <!-- check about Spring Cloud Gateway -->
+        <module>zuul-gateway</module>
     </modules>
     <packaging>pom</packaging>
 </project>
