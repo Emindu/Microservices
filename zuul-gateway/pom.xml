@@ -8,7 +8,7 @@
         <version>2.3.10.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>lk.ac.sjp.foe.co4353.g5</groupId>
+    <groupId>lk.ac.sjp.foe.co4353.g6</groupId>
     <artifactId>zuul-gateway</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>zuul-gateway</name>
