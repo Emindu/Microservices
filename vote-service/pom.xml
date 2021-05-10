@@ -8,7 +8,7 @@
         <version>2.4.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>lk.ac.sjp.foe.co4353.g5</groupId>
+    <groupId>lk.ac.sjp.foe.co4353.g6</groupId>
     <artifactId>vote-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>vote-service</name>
