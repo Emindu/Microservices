@@ -2,6 +2,7 @@ package lk.ac.sjp.foe.co4353.g6.voteservice.controller;
 
 import lk.ac.sjp.foe.co4353.g6.voteservice.models.AnswerVote;
 import lk.ac.sjp.foe.co4353.g6.voteservice.models.QuestionVote;
+import lk.ac.sjp.foe.co4353.g6.voteservice.models.VoteState;
 import lk.ac.sjp.foe.co4353.g6.voteservice.repository.AnswerVotesRepository;
 import lk.ac.sjp.foe.co4353.g6.voteservice.repository.QuestionVotesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,20 +23,20 @@ public class VoteServiceController {
     QuestionVotesRepository questionVotesRepository;
 
 
-    @GetMapping("/")
-    public String gethome(){
-        return "hi";
-    }
-
     @GetMapping("/answers/{answerId}")
     public ResponseEntity<Integer> getAnswerVotes(@PathVariable long answerId){
         try {
-            List<AnswerVote> answerVote =  answerVotesRepository.findByAnswerId(answerId);
+            List<AnswerVote> answerVotes =  answerVotesRepository.findByAnswerId(answerId);
 
-            if (answerVote == null){
+            if (answerVotes == null){
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }else{
-                return new ResponseEntity<>(answerVote.size(), HttpStatus.OK);
+
+                int sum = 0;
+                for (AnswerVote temp : answerVotes) {
+                    sum += temp.getVote();
+                }
+                return new ResponseEntity<>(sum, HttpStatus.OK);
             }
         }catch (Exception e){
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -46,12 +47,16 @@ public class VoteServiceController {
     @GetMapping("/question/{questionId}")
     public ResponseEntity<Integer> getQuestionVotes(@PathVariable long questionId){
         try {
-            List<QuestionVote> questionVote =  questionVotesRepository.findByQuestionId(questionId);
+            List<QuestionVote> questionVotes =  questionVotesRepository.findByQuestionId(questionId);
 
-            if (questionVote == null){
+            if (questionVotes == null){
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }else{
-                return new ResponseEntity<>(questionVote.size(), HttpStatus.OK);
+                int sum = 0;
+                for (QuestionVote temp : questionVotes) {
+                    sum += temp.getVote();
+                }
+                return new ResponseEntity<>(sum, HttpStatus.OK);
             }
         }catch (Exception e){
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -59,13 +64,13 @@ public class VoteServiceController {
     }
 
     @GetMapping("/state/user/{userId}/answer/{answerId}")
-    public ResponseEntity<String> getAnswerVoteState(@PathVariable long userId, @PathVariable long answerId){
+    public ResponseEntity<VoteState> getAnswerVoteState(@PathVariable long userId, @PathVariable long answerId){
         try {
         AnswerVote answerVote = answerVotesRepository.findByAnswerIdAndUserId(answerId, userId);
         if (answerVote == null){
-            return new ResponseEntity<>("No_voted",HttpStatus.OK);
+            return new ResponseEntity<>(new VoteState(0),HttpStatus.OK);
         }else{
-            return new ResponseEntity<>("Already_voted", HttpStatus.OK);
+            return new ResponseEntity<>(new VoteState(answerVote.getVote()), HttpStatus.OK);
         }
 
         }catch (Exception e){
@@ -74,13 +79,13 @@ public class VoteServiceController {
     }
 
     @GetMapping("/state/user/{userId}/question/{questionId}")
-    public ResponseEntity<String> getQuestionVoteState(@PathVariable long userId, @PathVariable long questionId){
+    public ResponseEntity<VoteState> getQuestionVoteState(@PathVariable long userId, @PathVariable long questionId){
         try {
             QuestionVote questionVote = questionVotesRepository.findByQuestionIdAndUserId(questionId, userId);
             if (questionVote == null){
-                return new ResponseEntity<>("No_voted",HttpStatus.OK);
+                return new ResponseEntity<>(new VoteState(0),HttpStatus.OK);
             }else{
-                return new ResponseEntity<>("Already_voted", HttpStatus.OK);
+                return new ResponseEntity<>(new VoteState(questionVote.getVote()), HttpStatus.OK);
             }
 
         }catch (Exception e){
@@ -88,13 +93,13 @@ public class VoteServiceController {
         }
     }
 
-    @PostMapping("/vote/user/{userId}/question/{questionId}")
-    public ResponseEntity<QuestionVote> setQuestionVote(@PathVariable long userId, @PathVariable long questionId){
+    @PostMapping("/vote/user/{userId}/question/{questionId}/vote/{vote}")
+    public ResponseEntity<QuestionVote> setQuestionVote(@PathVariable long userId, @PathVariable long questionId, @PathVariable int vote){
 
         try {
             QuestionVote questionVote = questionVotesRepository.findByQuestionIdAndUserId(questionId, userId);
             if (questionVote == null){
-                QuestionVote questionVote2 = questionVotesRepository.save(new QuestionVote(questionId, userId, 1));
+                QuestionVote questionVote2 = questionVotesRepository.save(new QuestionVote(questionId, userId, vote));
                 return new ResponseEntity<>(questionVote2, HttpStatus.CREATED);
             }else{
                 return new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR);
@@ -105,13 +110,13 @@ public class VoteServiceController {
         }
     }
 
-    @PostMapping("/vote/user/{userId}/answer/{answerId}")
-    public ResponseEntity<AnswerVote> setAnswerVote(@PathVariable long userId, @PathVariable long answerId){
+    @PostMapping("/vote/user/{userId}/answer/{answerId}/vote/{vote}")
+    public ResponseEntity<AnswerVote> setAnswerVote(@PathVariable long userId, @PathVariable long answerId, @PathVariable int vote){
 
         try {
             AnswerVote answerVote = answerVotesRepository.findByAnswerIdAndUserId(answerId, userId);
             if (answerVote == null){
-                AnswerVote answerVote2 = answerVotesRepository.save(new AnswerVote(answerId, userId, 1));
+                AnswerVote answerVote2 = answerVotesRepository.save(new AnswerVote(answerId, userId, vote));
                 return new ResponseEntity<>(answerVote2, HttpStatus.CREATED);
             }else{
                 //question id and user id already voted
