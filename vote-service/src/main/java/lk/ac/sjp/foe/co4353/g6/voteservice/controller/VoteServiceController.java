@@ -23,7 +23,7 @@ public class VoteServiceController {
     QuestionVotesRepository questionVotesRepository;
 
 
-    @GetMapping("/answers/{answerId}")
+    @GetMapping("/answer/{answerId}")
     public ResponseEntity<Integer> getAnswerVotes(@PathVariable long answerId){
         try {
             List<AnswerVote> answerVotes =  answerVotesRepository.findByAnswerId(answerId);
