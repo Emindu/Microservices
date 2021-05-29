@@ -1,0 +1,22 @@
+<div class="container">
+  <div class="vote-area">
+    <button>Up</button>
+    <span>{{post.votesCount}}</span>
+    <button class="voted">Down</button>
+  </div>
+  <div class="content-area">
+    <div class="text">
+      {{post.text}}
+    </div>
+    <div class="user">
+      <a [routerLink]="'/user/'+ post.user.id">
+        <div class="name">{{post.user.fullName}} </div>
+      </a>
+      <div class="date">
+        Added:
+        <span> {{ post.dateAdded | date }} </span>
+      </div>
+    </div>
+  </div>
+
+</div>

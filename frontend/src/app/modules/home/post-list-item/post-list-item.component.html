@@ -1,0 +1,23 @@
+<div class="container">
+  <div class="summary">
+    <div class="vote">
+      <span> {{ votesCount  }} </span>
+      <p>votes</p>
+    </div>
+  </div>
+  <div class="detail">
+    <div class="title">
+      <a [routerLink]="postLink">
+        {{ title }}
+      </a>
+    </div>
+    <div class="date">
+      Added:
+      <span> {{ addedDate | date }} </span>
+    </div>
+  </div>
+</div>
+
+
+
+
