@@ -1,10 +1,22 @@
 /* You can add global styles to this file, and also import other style files */
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
 @import '~primeicons/primeicons.css';
 @import '~primeng/resources/themes/md-light-deeppurple/theme.css';
 @import '~primeng/resources/primeng.min.css';
 
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
+
+// todo remove: dev only
+div, span {
+  border-width: 1px;
+  border-style: dotted;
+  border-radius: 5px;
+  border-color: rgba(0, 0, 0, 0.5);
+  padding: 2px;
+  margin: 2px;
+}

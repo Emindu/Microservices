@@ -1,0 +1,18 @@
+<div class="nav">
+  <div class="logo">
+    <a routerLink="/">
+      QnA Site
+    </a>
+  </div>
+  <div class="ask">
+    <a routerLink="/new">
+      Ask Question
+    </a>
+  </div>
+  <div class="user">
+    <a [routerLink]="'/user/'+ user.id">
+      <span class="name">{{ user.fullName }}</span>
+    </a>
+    <span class="reputation">{{ user.reputation }} reputation</span>
+  </div>
+</div>
