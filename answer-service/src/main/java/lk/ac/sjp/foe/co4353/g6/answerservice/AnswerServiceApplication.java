@@ -1,5 +1,7 @@
 package lk.ac.sjp.foe.co4353.g6.answerservice;
 
+import lk.ac.sjp.foe.co4353.g6.answerservice.dto.LongListWrapper;
+import lk.ac.sjp.foe.co4353.g6.answerservice.dto.LongLongMapWrapper;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -230,17 +232,19 @@ class AnswerController {
     }
 
 
-    @GetMapping("/questions/count")
-    public ResponseEntity<Map<Long, Long>> getAnswersCountsForQuestions(
-            @RequestBody List<Long> questionIdList) {
+    @PostMapping("/questions/count")
+    public ResponseEntity<LongLongMapWrapper> getAnswersCountsForQuestions(
+            @RequestBody LongListWrapper questionIdList) {
 
         try {
             Map<Long, Long> questionIdAnswersCountMap = new HashMap<>();
-            questionIdList.forEach(questionId -> questionIdAnswersCountMap.put(
-                    questionId,
-                    answerRepository.countByQuestionId(questionId)
-            ));
-            return new ResponseEntity<>(questionIdAnswersCountMap, HttpStatus.OK);
+            questionIdList.getBody()
+                    .forEach(questionId -> questionIdAnswersCountMap.put(
+                        questionId,
+                        answerRepository.countByQuestionId(questionId)
+                    ));
+            return new ResponseEntity<>(
+                    new LongLongMapWrapper(questionIdAnswersCountMap), HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

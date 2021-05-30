@@ -2,14 +2,12 @@ package lk.ac.sjp.foe.co4353.g6.questionservice.controller;
 
 import lk.ac.sjp.foe.co4353.g6.questionservice.model.Question;
 import lk.ac.sjp.foe.co4353.g6.questionservice.repository.QuestionRepository;
+import lk.ac.sjp.foe.co4353.g6.questionservice.service.AnswerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -17,20 +15,28 @@ import java.util.stream.Collectors;
 @RequestMapping("/questions")
 public class QuestionController {
     final QuestionRepository questionRepository;
+    final AnswerService answerService;
 
-    QuestionController(QuestionRepository questionRepository) {
+    QuestionController(QuestionRepository questionRepository, AnswerService answerService) {
         this.questionRepository = questionRepository;
+        this.answerService = answerService;
     }
 
     @GetMapping("/")
     public ResponseEntity<List<Question>> readAllQuestions() {
 
         try {
-            List<Question> questions = new ArrayList<>(questionRepository.findAll())
-                    .stream()
+            List<Question> questions = new ArrayList<>(questionRepository.findAll());
+            Map<Long, Long> questionIdAnswerCountsMap = answerService.getQuestionIdsVotesCounts(
+                            questions.stream()
+                                    .map(Question::getQuestionId)
+                                    .collect(Collectors.toList())
+                    ).getBody();
+
+            questions = questions.stream()
                     .peek(question -> {
                         //todo replace with service call
-                        long answersCount = 0L;
+                        long answersCount = questionIdAnswerCountsMap.get(question.getQuestionId());
                         long votesCount = 0L;
                         question.setAnswersCount(answersCount);
                         question.setVotesCount(votesCount);
