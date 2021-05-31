@@ -21,7 +21,7 @@ public class VoteService {
 
     public Map<Long, Long> getVoteCounts(List<Long> questionIds) {
         final LongLongMapWrapper wrappedResponse = restTemplate.postForObject(
-                "http://vote-service/votes/answers",
+                "http://vote-service/votes/questions",
                 new LongListWrapper(questionIds),
                 LongLongMapWrapper.class
         );
