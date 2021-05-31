@@ -3,6 +3,7 @@ package lk.ac.sjp.foe.co4353.g6.questionservice.controller;
 import lk.ac.sjp.foe.co4353.g6.questionservice.model.Question;
 import lk.ac.sjp.foe.co4353.g6.questionservice.repository.QuestionRepository;
 import lk.ac.sjp.foe.co4353.g6.questionservice.service.AnswerService;
+import lk.ac.sjp.foe.co4353.g6.questionservice.service.VoteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,10 +17,12 @@ import java.util.stream.Collectors;
 public class QuestionController {
     final QuestionRepository questionRepository;
     final AnswerService answerService;
+    final VoteService voteService;
 
-    QuestionController(QuestionRepository questionRepository, AnswerService answerService) {
+    QuestionController(QuestionRepository questionRepository, AnswerService answerService, VoteService voteService) {
         this.questionRepository = questionRepository;
         this.answerService = answerService;
+        this.voteService = voteService;
     }
 
     @GetMapping("/")
@@ -27,17 +30,21 @@ public class QuestionController {
 
         try {
             List<Question> questions = new ArrayList<>(questionRepository.findAll());
-            Map<Long, Long> questionIdAnswerCountsMap = answerService.getQuestionIdsVotesCounts(
+            Map<Long, Long> questionIdAnswerCountsMap = answerService.getAnswerCounts(
                             questions.stream()
                                     .map(Question::getQuestionId)
                                     .collect(Collectors.toList())
-                    ).getBody();
+                    );
+            Map<Long, Long> questionIdVotesCountsMap = voteService.getVoteCounts(
+                            questions.stream()
+                                    .map(Question::getQuestionId)
+                                    .collect(Collectors.toList())
+                    );
 
             questions = questions.stream()
                     .peek(question -> {
-                        //todo replace with service call
                         long answersCount = questionIdAnswerCountsMap.get(question.getQuestionId());
-                        long votesCount = 0L;
+                        long votesCount = questionIdVotesCountsMap.get(question.getQuestionId());
                         question.setAnswersCount(answersCount);
                         question.setVotesCount(votesCount);
                     })
@@ -62,9 +69,8 @@ public class QuestionController {
 
             return questionEntity
                     .map(question -> {
-                        //todo replace with service call
-                        long answersCount = 0L;
-                        long votesCount = 0L;
+                        long answersCount = answerService.getAnswerCounts(questionId);
+                        long votesCount = voteService.getVoteCounts(questionId);
                         question.setAnswersCount(answersCount);
                         question.setVotesCount(votesCount);
                         return new ResponseEntity<>(question, HttpStatus.OK);
@@ -85,8 +91,8 @@ public class QuestionController {
             Question _question = questionRepository.save(new Question(
                     question.getTitle(),
                     question.getText(),
-                    1L,        //todo: change this
-                    1L,     //todo: change this
+                    question.getCreatedBy(),
+                    question.getLastModifiedBy(),
                     currentTime,
                     currentTime
             ));
@@ -109,7 +115,7 @@ public class QuestionController {
                     .map(_questionEntry -> {
                         _questionEntry.setTitle(question.getTitle());
                         _questionEntry.setText(question.getText());
-                        _questionEntry.setLastModifiedBy(question.getLastModifiedBy()); // todo: check
+                        _questionEntry.setLastModifiedBy(question.getLastModifiedBy());
                         _questionEntry.setLastModifiedDate(new Date());
                         return new ResponseEntity<>(questionRepository.save(_questionEntry), HttpStatus.OK);
                     })
@@ -140,17 +146,27 @@ public class QuestionController {
 
         try {
             List<Question> questions =
-                    new ArrayList<>(questionRepository.findByCreatedBy(userId))
-                            .stream()
-                            .peek(question -> {
-                                        //todo replace with service call
-                                        long answersCount = 0L;
-                                        long votesCount = 0L;
-                                        question.setAnswersCount(answersCount);
-                                        question.setVotesCount(votesCount);
-                                    }
-                            )
-                            .collect(Collectors.toList());
+                    new ArrayList<>(questionRepository.findByCreatedBy(userId));
+            Map<Long, Long> questionIdAnswerCountsMap = answerService.getAnswerCounts(
+                    questions.stream()
+                            .map(Question::getQuestionId)
+                            .collect(Collectors.toList())
+            );
+            Map<Long, Long> questionIdVoteCountsMap = voteService.getVoteCounts(
+                    questions.stream()
+                            .map(Question::getQuestionId)
+                            .collect(Collectors.toList())
+            );
+            questions = questions
+                    .stream()
+                    .peek(question -> {
+                                long answersCount = questionIdAnswerCountsMap.get(question.getQuestionId());
+                                long votesCount = questionIdVoteCountsMap.get(question.getQuestionId());
+                                question.setAnswersCount(answersCount);
+                                question.setVotesCount(votesCount);
+                            }
+                    )
+                    .collect(Collectors.toList());
 
             if (questions.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);

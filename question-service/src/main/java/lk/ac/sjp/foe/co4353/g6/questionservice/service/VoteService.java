@@ -5,20 +5,23 @@ import lk.ac.sjp.foe.co4353.g6.questionservice.dto.LongLongMapWrapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
-public class AnswerService {
+public class VoteService {
 
     private final RestTemplate restTemplate;
 
-    public AnswerService(RestTemplate restTemplate) {
+    public VoteService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
-    public Map<Long, Long> getAnswerCounts(List<Long> questionIds) {
+    public Map<Long, Long> getVoteCounts(List<Long> questionIds) {
         final LongLongMapWrapper wrappedResponse = restTemplate.postForObject(
-                "http://answer-service/answers/questions/count",
+                "http://vote-service/votes/answers",
                 new LongListWrapper(questionIds),
                 LongLongMapWrapper.class
         );
@@ -28,7 +31,7 @@ public class AnswerService {
                 .getBody();
     }
 
-    public Long getAnswerCounts(Long questionId) {
-        return getAnswerCounts(Collections.singletonList(questionId)).get(questionId);
+    public Long getVoteCounts(Long questionId) {
+        return getVoteCounts(Collections.singletonList(questionId)).get(questionId);
     }
 }
