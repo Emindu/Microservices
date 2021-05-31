@@ -70,4 +70,15 @@ public class UserController {
         }
     }
 
+    @PutMapping("reputation/{userId}")
+    public ResponseEntity<Reputation> putUserReputation(@PathVariable long userId, @RequestBody Reputation reputation){
+        try{
+            User userToUpdate = userRepository.getOne(userId);
+            userToUpdate.setReputation(reputation.getReputation());
+            userRepository.save(userToUpdate);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
