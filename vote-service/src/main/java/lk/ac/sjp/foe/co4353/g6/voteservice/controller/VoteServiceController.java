@@ -29,18 +29,7 @@ public class VoteServiceController {
     @GetMapping("/answer/{answerId}")
     public ResponseEntity<Integer> getAnswerVotes(@PathVariable long answerId){
         try {
-            List<AnswerVote> answerVotes =  answerVotesRepository.findByAnswerId(answerId);
-
-            if (answerVotes == null){
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }else{
-
-                int sum = 0;
-                for (AnswerVote temp : answerVotes) {
-                    sum += temp.getVote();
-                }
-                return new ResponseEntity<>(sum, HttpStatus.OK);
-            }
+                return new ResponseEntity<>(calculateAnswerVotes(answerId), HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -69,6 +58,19 @@ public class VoteServiceController {
         }
     }
 
+    private Integer calculateAnswerVotes(long answerId) {
+        List<AnswerVote> answerVotes =  answerVotesRepository.findByAnswerId(answerId);
+        if (answerVotes == null){
+            return 0;
+        }else{
+            int sum = 0;
+            for (AnswerVote temp : answerVotes) {
+                sum += temp.getVote();
+            }
+            return sum;
+        }
+    }
+
     @PostMapping("/questions")
     public ResponseEntity<DataWrapper<Map<Long,Long>>> getQuestionsVotes(
             @RequestBody DataWrapper<List<Long>> questionIds
@@ -82,6 +84,25 @@ public class VoteServiceController {
                     ));
             return new ResponseEntity<>(
                     new DataWrapper<>(questionIdsVotesMap), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/answers")
+    public ResponseEntity<DataWrapper<Map<Long,Long>>> getAnswersVotes(
+            @RequestBody DataWrapper<List<Long>> answerIds
+    ) {
+        try {
+            Map<Long, Long> answersIdsVotesMap = new HashMap<>();
+            answerIds.getBody()
+                    .forEach(answerId -> answersIdsVotesMap.put(
+                            answerId,
+                            Long.valueOf(calculateAnswerVotes(answerId))
+                    ));
+            return new ResponseEntity<>(
+                    new DataWrapper<>(answersIdsVotesMap), HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
