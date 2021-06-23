@@ -1,0 +1,29 @@
+$orange-500: #f2720c;
+
+.user {
+  padding: 8px 12px;
+  margin-left: 6px;
+  span {
+    margin-left: 6px;
+  }
+
+  a {
+    display: flex;
+    flex-direction: row;
+  }
+  svg {
+    height: 1em;
+    fill: $orange-500;
+  }
+  border-radius: 3px;
+  background: rgba(242, 114, 12, 0.2);
+}
+
+
+.user:hover {
+  background: rgba(242, 114, 12, 0.3);
+}
+
+div.btn {
+  margin-left: 6px;
+}

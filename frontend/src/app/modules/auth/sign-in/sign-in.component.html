@@ -1,0 +1,24 @@
+<div class="container">
+  <div class="card">
+    <form (submit)="onSubmit()">
+
+      <div class="form-field">
+        <label for="username">Username</label>
+        <input [(ngModel)]="username" name="email" id="username">
+      </div>
+
+      <div class="form-field">
+        <label for="password">Password</label>
+        <input [(ngModel)]="password" name="password" id="password" type="password">
+      </div>
+
+      <div class="form-submit">
+        <button type="submit" [disabled]="isEmpty()">Sign In</button>
+      </div>
+    </form>
+  </div>
+
+</div>
+
+
+
