@@ -2,6 +2,7 @@ import {Injectable, Injector, Type} from '@angular/core';
 import {AnswerService} from "./answer.service";
 import {QuestionService} from "./question.service";
 import {UserService} from "./user.service";
+import {VoteService} from "./vote.service";
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,7 @@ export class FacadeService {
   private _answerService: AnswerService;
   private _questionService: QuestionService;
   private _userService: UserService;
+  private _voteService: VoteService;
 
   constructor(private injector: Injector) { }
 
@@ -33,5 +35,12 @@ export class FacadeService {
     this._userService = this.injector.get<UserService>(UserService as Type<UserService>);
   }
     return this._userService;
+  }
+
+  get voteService(): VoteService {
+    if (!this._voteService) {
+    this._voteService = this.injector.get<VoteService>(VoteService as Type<VoteService>);
+  }
+    return this._voteService;
   }
 }

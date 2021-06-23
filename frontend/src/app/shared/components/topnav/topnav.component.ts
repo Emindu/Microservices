@@ -9,7 +9,7 @@ import {FacadeService} from "../../../core/services/facade.service";
 })
 export class TopnavComponent implements OnInit {
 
-  user: User;
+  user: User = null;
 
   constructor(private facadeService: FacadeService) { }
 

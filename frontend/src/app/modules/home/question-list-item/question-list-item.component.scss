@@ -23,5 +23,13 @@
 }
 
 .detail {
+  display: flex;
+  margin-top: 12px;
   width:  100%;
+  .title {
+    font-size: 1.3em;
+  }
+  .date{
+    margin-left: auto;
+  }
 }

@@ -8,6 +8,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { HttpClientModule } from '@angular/common/http';
 import {SharedModule} from "./shared/shared.module";
+import {AuthModule} from "./modules/auth/auth.module";
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import {SharedModule} from "./shared/shared.module";
     HttpClientModule,
     AppRoutingModule,
     HomeModule,
+    AuthModule,
     BrowserAnimationsModule,
     SharedModule
   ],

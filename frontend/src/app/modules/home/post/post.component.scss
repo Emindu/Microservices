@@ -1,33 +1,10 @@
 .container {
   display: flex;
-}
-
-.vote-area {
-  width: auto;
-  padding-right: 16px;
-  vertical-align: top;
-  grid-column: 1;
-  display: flex;
-  flex-direction: column;
-
-  button {
-    margin: 2px;
-    &:hover {
-      background-color: transparent;
-    }
-  }
-
-  .voted {
-    color: rgba(255, 71, 0, 0.63);
-  }
+  margin-bottom: 24px;
 }
 
 .content-area {
-  width: 100%
+  width: 100%;
+  margin-bottom: 6px;
 }
 
-.user {
-  div {
-    text-align: right;
-  }
-}
