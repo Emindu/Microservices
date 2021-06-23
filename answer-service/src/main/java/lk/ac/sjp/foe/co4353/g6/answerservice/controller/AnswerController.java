@@ -1,9 +1,10 @@
 package lk.ac.sjp.foe.co4353.g6.answerservice.controller;
 
-import lk.ac.sjp.foe.co4353.g6.answerservice.model.Answer;
 import lk.ac.sjp.foe.co4353.g6.answerservice.dto.LongListWrapper;
 import lk.ac.sjp.foe.co4353.g6.answerservice.dto.LongLongMapWrapper;
+import lk.ac.sjp.foe.co4353.g6.answerservice.model.Answer;
 import lk.ac.sjp.foe.co4353.g6.answerservice.repository.AnswerRepository;
+import lk.ac.sjp.foe.co4353.g6.answerservice.service.VoteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +17,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/answers")
 public class AnswerController {
     final AnswerRepository answerRepository;
+    final VoteService voteService;
 
-    AnswerController(AnswerRepository answerRepository) {
+    AnswerController(AnswerRepository answerRepository, VoteService voteService) {
         this.answerRepository = answerRepository;
+        this.voteService = voteService;
     }
 
     @GetMapping("/{answerId}")
@@ -29,8 +32,7 @@ public class AnswerController {
             if (answer == null) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             } else {
-                // TODO: replace with service call
-                long votesCount = 0L;
+                long votesCount = voteService.getVoteCounts(answerId);
                 answer.setVoteCount(votesCount);
                 return new ResponseEntity<>(answer, HttpStatus.OK);
             }
@@ -63,16 +65,20 @@ public class AnswerController {
             @PathVariable("questionId") Long questionId) {
 
         try {
-            List<Answer> answers = new ArrayList<>(answerRepository.findByQuestionId(questionId))
-                    .stream()
-                    .peek(answer -> {
-                        long votesCount = 0L; //TODO: replace with service call
-                        answer.setVoteCount(votesCount);
-                    })
-                    .collect(Collectors.toList());
+            List<Answer> answers = new ArrayList<>(answerRepository.findByQuestionId(questionId));
+
             if (answers.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
+            Map<Long, Long> votesMap = voteService.getVoteCounts(
+                    answers.stream()
+                            .map(Answer::getAnswerId)
+                            .collect(Collectors.toList())
+            );
+            answers = answers
+                    .stream()
+                    .peek(answer -> answer.setVoteCount(votesMap.get(answer.getAnswerId())))
+                    .collect(Collectors.toList());
             return new ResponseEntity<>(answers, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
@@ -104,16 +110,21 @@ public class AnswerController {
     public ResponseEntity<List<Answer>> readQuestionsByUser(@PathVariable("userId") Long userId) {
 
         try {
-            List<Answer> answers =
-                    new ArrayList<>(answerRepository.findByCreatedBy(userId))
-                            .stream()
-                            .peek(answer -> {
-                                        //TODO: replace with service call
-                                        long votesCount = 0L;
-                                        answer.setVoteCount(votesCount);
-                                    }
-                            )
-                            .collect(Collectors.toList());
+            List<Answer> answers = new ArrayList<>(answerRepository.findByCreatedBy(userId));
+
+            if (answers.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            Map<Long, Long> votesMap = voteService.getVoteCounts(
+                    answers.stream()
+                            .map(Answer::getAnswerId)
+                            .collect(Collectors.toList())
+            );
+
+            answers = answers
+                    .stream()
+                    .peek(answer -> answer.setVoteCount(votesMap.get(answer.getAnswerId())))
+                    .collect(Collectors.toList());
 
             if (answers.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
