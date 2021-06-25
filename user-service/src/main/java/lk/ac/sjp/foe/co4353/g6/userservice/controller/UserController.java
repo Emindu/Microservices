@@ -35,8 +35,25 @@ public class UserController {
     @GetMapping("users")
     public ResponseEntity<List<User>> getAllUsers(){
         try {
-            List<User> users = new ArrayList<User>();
+            List<User> users;
             users = userRepository.findAll();
+
+            if(users.isEmpty()){
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }else{
+                return new ResponseEntity<>(users, HttpStatus.OK);
+            }
+        }catch (Exception e){
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @PostMapping("users")
+    public ResponseEntity<List<User>> getUsers(@RequestBody List<Long> userIds){
+        try {
+            List<User> users;
+            users = userRepository.findAllById(userIds);
 
             if(users.isEmpty()){
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
