@@ -1,0 +1,35 @@
+.container {
+  display: flex;
+}
+
+.summary {
+  display: flex;
+  width: auto;
+  margin-right: 12px;
+  color: var(--black-500);
+  font-size: 11px;
+
+  .vote, .answer {
+    margin-left: 20px;
+    width: 58px;
+    text-align: center;
+
+    span {
+      font-size: 20px;
+      color: rgba(0, 0, 0, 0.5);
+    }
+  }
+
+}
+
+.detail {
+  display: flex;
+  margin-top: 12px;
+  width:  100%;
+  .title {
+    font-size: 1.3em;
+  }
+  .date{
+    margin-left: auto;
+  }
+}

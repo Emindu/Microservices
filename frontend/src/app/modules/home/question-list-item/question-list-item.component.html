@@ -1,0 +1,27 @@
+<div class="container">
+  <div class="summary">
+    <div class="vote">
+      <span> {{ question.votesCount  }} </span>
+      <p>votes</p>
+    </div>
+    <div class="answer">
+      <span> {{ question.answersCount }} </span>
+      <p>answers</p>
+    </div>
+  </div>
+  <div class="detail">
+    <div class="title">
+      <a [routerLink]="'./' + question.id">
+        {{ question.title }}
+      </a>
+    </div>
+    <div class="date">
+      Asked:
+      <span> {{ question.dateUpdated | date }} </span>
+    </div>
+  </div>
+</div>
+
+
+
+
