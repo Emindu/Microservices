@@ -17,6 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/votes")
+@CrossOrigin(origins = "*")
 public class VoteServiceController {
 
     @Autowired
