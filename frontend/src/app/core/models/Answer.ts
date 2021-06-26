@@ -1,10 +1,10 @@
-import {Question} from "./Question";
-import {Post} from "./Post";
+import {Question} from './Question';
+import {Post} from './Post';
 
 export interface Answer extends Post{
-  question: Question;
+  question: Partial<Question>;
 }
 
 export function instanceOfAnswer(post: Post): post is Answer {
-  return 'question' in post;
+  return 'question' in post || !('title' in post);
 }

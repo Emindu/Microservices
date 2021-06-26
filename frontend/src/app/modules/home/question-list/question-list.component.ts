@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {Question} from "../../../core/models/Question";
-import {FacadeService} from "../../../core/services/facade.service";
+import {Question} from '../../../core/models/Question';
+import {FacadeService} from '../../../core/services/facade.service';
 
 @Component({
   selector: 'app-question-list',
@@ -18,7 +18,7 @@ export class QuestionListComponent implements OnInit {
         this.questionList = questions;
       },
       error => {
-        console.log(error)
+        console.log(error);
       }
     );
   }

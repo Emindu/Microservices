@@ -1,40 +1,75 @@
-import { Injectable } from '@angular/core';
-import {Observable, of} from "rxjs";
-import {Answer} from "../models/Answer";
-import {answersMockData} from "../data/answers.mock";
-import {usersMockData} from "../data/users.mock";
-import {questionsMockData} from "../data/questions.mock";
+import {Injectable} from '@angular/core';
+import {combineLatest,  Observable, of} from 'rxjs';
+import {Answer} from '../models/Answer';
+import {HttpClient} from '@angular/common/http';
+import {UserService} from './user.service';
+import {map, mergeMap, tap} from 'rxjs/operators';
+import {AnswerDto, mapToAnswer} from '../dto/AnswerDto';
+import {environment} from '../../../environments/environment';
+import {QuestionService} from './question.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AnswerService {
 
-  constructor() { }
+  constructor(
+    private http: HttpClient,
+    private userService: UserService,
+    private questionService: QuestionService
+  ) {
+  }
+
+  $getAnswers(url: string): Observable<Answer[]> {
+    return this.http.get<AnswerDto[] | AnswerDto>(url)
+      .pipe(
+        map(AnswerDtoList =>
+          AnswerDtoList == null ? [] : Array.isArray(AnswerDtoList) ? AnswerDtoList : [AnswerDtoList]
+        ),
+        mergeMap(AnswerDtoList => combineLatest(
+          of(AnswerDtoList),
+          this.userService.getUsersById(AnswerDtoList.map(dto => dto.createdBy)),
+          this.questionService.getPartialQuestionById(AnswerDtoList.map(dto => dto.questionId))
+        )),
+        map(([AnswerDtoList, users, questions]) =>
+            AnswerDtoList.map(dto => mapToAnswer(
+              dto,
+              users.filter(user => (+user.id) === dto.createdBy).pop(),
+              questions.filter(question => question.id === dto.questionId).pop()
+              )
+            )
+        ),
+        tap(console.log)
+      );
+  }
 
   getAnswersOfQuestion(questionId: number | string): Observable<Answer[]> {
-    return of(answersMockData.filter(answer => answer.question.id == questionId));
+    return this.$getAnswers(`${environment.API_ANSWER_SERVICE}/answers/question/${questionId}/`);
   }
 
   getAnswersOfUser(userId: number | string): Observable<Answer[]> {
-    return of(answersMockData.filter(answer => answer.user.id == userId));
+    return this.$getAnswers(`${environment.API_ANSWER_SERVICE}/answers/user/${userId}/`);
   }
 
-  getAnswer(answerId: string | number): Observable<Answer> {
-    return of(answersMockData.filter(ans => ans.id == answerId).pop());
-  }
 
   submitAnswer(questionId: string | number, userId: string | number, text: string): Observable<Answer> {
-    let id = Math.max(...answersMockData.map(ans => Number(ans.id))) + 1;
-    let newAnswer: Answer = {
-      id,
-      votesCount: 0,
-      dateAdded: new Date(),
-      dateUpdated: new Date(),
-      text,
-      user: usersMockData.filter(user => user.id == userId).pop(),
-      question: questionsMockData.filter(ques => ques.id == questionId).pop(),
+    const answerBody: Partial<AnswerDto> = {
+      questionId: +questionId,
+      createdBy: +userId,
+      text
     };
-    return of(newAnswer);
+
+    return this.http.post<AnswerDto>(`${environment.API_ANSWER_SERVICE}/answers/`, answerBody)
+      .pipe(
+        mergeMap(answerResult =>
+          combineLatest(
+            of(answerResult),
+            this.userService.getUser(answerResult.createdBy)
+          )
+        ),
+        map(([answerDto, user]) =>
+          mapToAnswer(answerDto, user, {id: questionId})
+        )
+      );
   }
 }

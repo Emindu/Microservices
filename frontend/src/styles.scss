@@ -1,5 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 
+@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
+
 html, body { height: 100%; }
 body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
@@ -288,10 +290,17 @@ form {
 }
 
 hr {
-  border-top: 1px solid  $black-300;
+  border-top: 1px solid  $black-200;
+  border-bottom: 0;
+  border-left: 0;
+  border-right: 0;
   height: 1px;
   margin: 6px 0;
   margin-bottom: 12px;
 }
 
-
+.subtitle {
+  font-size: 0.9em;
+  color: $orange-500;
+  margin: 3px 0 3px 0;
+}

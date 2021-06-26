@@ -1,6 +1,5 @@
 package lk.ac.sjp.foe.co4353.g6.zuulgateway;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

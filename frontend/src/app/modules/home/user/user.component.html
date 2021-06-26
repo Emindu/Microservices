@@ -1,8 +1,12 @@
-<div class="title">
-  <h1>User: {{user.fullName}}</h1>
-</div>
+<ng-container *ngIf="loadedUser; else loading">
 
-<h2>Questions</h2>
+  <div class="title">
+    <h1>User: {{user.fullName}}</h1>
+  </div>
+
+  <ng-container *ngIf="loadedQuestionsAndAnswers; else loading">
+
+    <h2>Questions</h2>
 
 <ng-container *ngFor="let question of questions">
   <div class="post">
@@ -15,15 +19,24 @@
   </div>
 </ng-container>
 
-<h2>Answers</h2>
+    <h2>Answered</h2>
 
-<ng-container *ngFor="let answer of answers">
-  <div class="post">
-    <app-post-list-item
-      [title]="answer.question.title"
-      [addedDate]="answer.dateAdded"
-      [postLink]="'/questions/' + answer.question.id"
-      [votesCount]="answer.votesCount"
-    ></app-post-list-item>
-  </div>
+    <ng-container *ngFor="let answer of answers">
+      <div class="post">
+        <app-post-list-item
+          [addedDate]="answer.dateAdded"
+          [postLink]="'/questions/' + answer.question.id"
+          [title]="answer.question.title"
+          [votesCount]="answer.votesCount"
+          [subtitle]="answer.text"
+        ></app-post-list-item>
+      </div>
+    </ng-container>
+
+  </ng-container>
 </ng-container>
+
+<ng-template #loading>
+  <app-loading></app-loading>
+</ng-template>
+
