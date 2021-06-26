@@ -35,10 +35,10 @@ public class VoteServiceApplication {
     @Bean
     ApplicationRunner init2(QuestionVotesRepository repository) {
         return args -> Stream.of(
-                new QuestionVote( 10, 10 , 10
+                new QuestionVote( 1, 1 , 10
                 ),
                 new QuestionVote(
-                        11 , 11 , 11
+                        2 , 2 , 11
                 )
         ).forEach(repository::save);
     }
