@@ -28,9 +28,9 @@ public class VoteServiceController {
 
 
     @GetMapping("/answer/{answerId}")
-    public ResponseEntity<Integer> getAnswerVotes(@PathVariable long answerId){
+    public ResponseEntity<VoteState> getAnswerVotes(@PathVariable long answerId){
         try {
-                return new ResponseEntity<>(calculateAnswerVotes(answerId), HttpStatus.OK);
+                return new ResponseEntity<>(new VoteState(calculateAnswerVotes(answerId)), HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -38,9 +38,9 @@ public class VoteServiceController {
     }
 
     @GetMapping("/question/{questionId}")
-    public ResponseEntity<Integer> getQuestionVotes(@PathVariable long questionId){
+    public ResponseEntity<VoteState> getQuestionVotes(@PathVariable long questionId){
         try {
-            return new ResponseEntity<>(calculateQuestionVotes(questionId), HttpStatus.OK);
+            return new ResponseEntity<>(new VoteState(calculateQuestionVotes(questionId)), HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
