@@ -22,7 +22,7 @@ export class QuestionComponent implements OnInit {
 
   constructor(
     private facadeService: FacadeService,
-    private route: ActivatedRoute,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
@@ -59,17 +59,21 @@ export class QuestionComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.facadeService.answerService.submitAnswer(
-      this.question.id,
-      this.loggedInUser.id,
-      this.newAnswer
-    ).subscribe(newAnswer => {
-      console.log('Submitted');
-      this.answers = [...this.answers, newAnswer];
-      this.newAnswer = null;
-    }, error => {
-      console.log(error);
-    });
+    if ((this.loggedInUser || {}).id){
+      this.loadedAnswers = false;
+      this.facadeService.answerService.submitAnswer(
+        this.question.id,
+        this.loggedInUser.id,
+        this.newAnswer
+      ).subscribe(newAnswer => {
+        console.log('Submitted', newAnswer);
+        this.answers = [...this.answers, newAnswer];
+        this.newAnswer = null;
+        this.loadedAnswers = true;
+      }, error => {
+        console.log(error);
+      });
+    }
   }
 
   isAnswerEmpty(): boolean {

@@ -1,6 +1,5 @@
 import { Question } from '../models/Question';
-import {mapToUser, UserDto} from './UserDto';
-import {instanceOfUserDto, User} from '../models/User';
+import {User} from '../models/User';
 
 export interface QuestionDto {
     questionId: number;
@@ -16,12 +15,12 @@ export interface QuestionDto {
     votesCount: number;
 }
 
-export function mapToQuestion(questionDto: QuestionDto, user: User | UserDto): Question{
+export function mapToQuestion(questionDto: QuestionDto, user: User ): Question{
   return {
     ...questionDto,
     id: questionDto.questionId,
     dateAdded: questionDto.createdDate,
     dateUpdated: questionDto.lastModifiedDate,
-    user: instanceOfUserDto(user) ? user : mapToUser(user)
+    user
   };
 }

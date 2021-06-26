@@ -1,5 +1,6 @@
 import { Answer } from '../models/Answer';
-import {mapToUser, UserDto} from './UserDto';
+import {User} from '../models/User';
+import {Question} from '../models/Question';
 
 export interface AnswerDto{
     answerId: number;
@@ -11,17 +12,17 @@ export interface AnswerDto{
     createdDate: Date;
     lastModifiedDate: Date;
 
-    votesCount: number;
+    voteCount: number;
 }
 
-export function mapToAnswer(answerDto: AnswerDto, userDto: UserDto): Answer{
+export function mapToAnswer(answerDto: AnswerDto, user: Partial<User>, question: Partial<Question>): Answer{
   return {
     id: answerDto.answerId,
     dateAdded: answerDto.createdDate,
     dateUpdated: answerDto.lastModifiedDate,
     text: answerDto.text,
-    votesCount: answerDto.votesCount,
-    question: null, // todo
-    user: mapToUser(userDto)
+    votesCount: answerDto.voteCount || 0,
+    user,
+    question
   };
 }

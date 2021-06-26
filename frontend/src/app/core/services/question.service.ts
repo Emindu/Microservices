@@ -6,6 +6,8 @@ import {environment} from 'src/environments/environment';
 import {mapToQuestion, QuestionDto} from '../dto/QuestionDto';
 import {map, mergeMap, tap} from 'rxjs/operators';
 import {UserService} from './user.service';
+import {User} from '../models/User';
+import {mapToUser, UserDto} from '../dto/UserDto';
 
 @Injectable({
   providedIn: 'root'
@@ -28,6 +30,23 @@ export class QuestionService {
         ),
         tap(console.log)
       )
+  }
+
+  getPartialQuestionById(questionIds: number[]): Observable<Partial<Question>[]> {
+    if ( (questionIds || []).length === 0 ){
+      return of([]);
+    }
+    return this.http.post<QuestionDto[]>(`${environment.API_QUESTION_SERVICE}/questions/by/id`, questionIds)
+      .pipe(
+        map(
+          userDtos => userDtos.map(dto => {
+            return {
+              id : dto.questionId,
+              title: dto.title
+            };
+          })
+        )
+      );
   }
 
   getQuestions(): Observable<Question[]> {

@@ -11,6 +11,11 @@
         {{ title }}
       </a>
     </div>
+
+    <div *ngIf="subtitle.length > 0" class="subtitle">
+      {{ subtitle }}
+    </div>
+
     <div class="date">
       Added:
       <span> {{ addedDate | date }} </span>

@@ -2,7 +2,7 @@ import {Question} from './Question';
 import {Post} from './Post';
 
 export interface Answer extends Post{
-  question?: Question;
+  question: Partial<Question>;
 }
 
 export function instanceOfAnswer(post: Post): post is Answer {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {User} from '../models/User';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
@@ -14,6 +14,9 @@ export class UserService {
   constructor(private http: HttpClient) { }
 
   getUsersById(userIds: number[]): Observable<User[]> {
+    if ( (userIds || []).length === 0 ){
+      return of([]);
+    }
     return this.http.post<UserDto[]>(`${environment.API_USER_SERVICE}/users/`, userIds)
       .pipe(
         map(
