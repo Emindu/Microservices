@@ -1,27 +1,36 @@
-<div class="title">
-  <h1>{{question.title}}</h1>
-</div>
+<ng-template #loading>
+  <app-loading></app-loading>
+</ng-template>
 
-<div class="question">
-  <app-post [post]="question"></app-post>
-</div>
-
-<h2>Answers</h2>
-
-<ng-container *ngFor="let answer of answers">
-  <div class="answer">
-    <app-post [post]="answer"></app-post>
+<ng-container *ngIf="loadedQuestions; else loading">
+  <div class="title">
+    <h1>{{question.title}}</h1>
   </div>
-</ng-container>
 
-<h2>Your Answer</h2>
+  <div class="question">
+    <app-post [post]="question"></app-post>
+  </div>
 
-<div class="your-answer">
-  <form (submit)="onSubmit()">
+  <h2>Answers</h2>
+
+  <ng-container *ngIf="loadedAnswers; else loading">
+    <ng-container *ngFor="let answer of answers">
+      <div class="answer">
+        <app-post [post]="answer"></app-post>
+      </div>
+    </ng-container>
+  </ng-container>
+  <ng-container *ngIf="loggedInUser">
+
+    <h2>Your Answer</h2>
+
+    <div class="your-answer">
+      <form (submit)="onSubmit()">
     <textarea placeholder="Add your answer here" rows="10"
               [(ngModel)]="newAnswer" name="answer"></textarea>
-    <button type="submit" [disabled]="isAnswerEmpty()">Post Your Answer</button>
-  </form>
-</div>
+        <button type="submit" [disabled]="isAnswerEmpty()">Post Your Answer</button>
+      </form>
+    </div>
 
-
+  </ng-container>
+</ng-container>
