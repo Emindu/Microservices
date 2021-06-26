@@ -55,7 +55,7 @@ export class PostComponent implements OnInit {
       result => {
         console.log(result);
         this.voteState = result;
-        this.post.votesCount += (vote - oldVote);
+        this.post.votesCount = this.post.votesCount + (vote - oldVote);
         this.changeDetectRef.markForCheck();
         this.loaded = true;
       },

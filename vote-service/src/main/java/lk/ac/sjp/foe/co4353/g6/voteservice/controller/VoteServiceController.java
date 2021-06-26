@@ -150,7 +150,9 @@ public class VoteServiceController {
                 QuestionVote questionVote2 = questionVotesRepository.save(new QuestionVote(questionId, userId, vote));
                 return new ResponseEntity<>(questionVote2, HttpStatus.CREATED);
             }else{
-                return new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR);
+                questionVote.setVote(vote);
+                QuestionVote questionVote2 = questionVotesRepository.save(questionVote);
+                return new ResponseEntity<>(questionVote2 , HttpStatus.ACCEPTED);
             }
 
         }catch (Exception e){
@@ -167,8 +169,9 @@ public class VoteServiceController {
                 AnswerVote answerVote2 = answerVotesRepository.save(new AnswerVote(answerId, userId, vote));
                 return new ResponseEntity<>(answerVote2, HttpStatus.CREATED);
             }else{
-                //question id and user id already voted
-                return new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR);
+                answerVote.setVote( vote);
+                AnswerVote questionVote3 = answerVotesRepository.save(answerVote);
+                return new ResponseEntity<>(questionVote3 , HttpStatus.ACCEPTED);
             }
 
         }catch (Exception e){
