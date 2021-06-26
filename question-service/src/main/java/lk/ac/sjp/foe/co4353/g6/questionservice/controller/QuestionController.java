@@ -30,35 +30,51 @@ public class QuestionController {
 
         try {
             List<Question> questions = new ArrayList<>(questionRepository.findAll());
-            Map<Long, Long> questionIdAnswerCountsMap = answerService.getAnswerCounts(
-                            questions.stream()
-                                    .map(Question::getQuestionId)
-                                    .collect(Collectors.toList())
-                    );
-            Map<Long, Long> questionIdVotesCountsMap = voteService.getVoteCounts(
-                            questions.stream()
-                                    .map(Question::getQuestionId)
-                                    .collect(Collectors.toList())
-                    );
-
-            questions = questions.stream()
-                    .peek(question -> {
-                        long answersCount = questionIdAnswerCountsMap.get(question.getQuestionId());
-                        long votesCount = questionIdVotesCountsMap.get(question.getQuestionId());
-                        question.setAnswersCount(answersCount);
-                        question.setVotesCount(votesCount);
-                    })
-                    .collect(Collectors.toList());
-
-            if (questions.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(questions, HttpStatus.OK);
+            return getResponseEntityOfQuestionList(questions);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+    }
+
+    @PostMapping("/by/id")
+    public ResponseEntity<List<Question>> readQuestionsByIds(@RequestBody List<Long> questionIds){
+
+        try {
+            List<Question> questions = new ArrayList<>(questionRepository.findAllById(questionIds));
+            return getResponseEntityOfQuestionList(questions);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private ResponseEntity<List<Question>> getResponseEntityOfQuestionList(List<Question> questions) {
+        Map<Long, Long> questionIdAnswerCountsMap = answerService.getAnswerCounts(
+                questions.stream()
+                        .map(Question::getQuestionId)
+                        .collect(Collectors.toList())
+        );
+        Map<Long, Long> questionIdVotesCountsMap = voteService.getVoteCounts(
+                questions.stream()
+                        .map(Question::getQuestionId)
+                        .collect(Collectors.toList())
+        );
+
+        questions = questions.stream()
+                .peek(question -> {
+                    long answersCount = questionIdAnswerCountsMap.get(question.getQuestionId());
+                    long votesCount = questionIdVotesCountsMap.get(question.getQuestionId());
+                    question.setAnswersCount(answersCount);
+                    question.setVotesCount(votesCount);
+                })
+                .collect(Collectors.toList());
+
+        if (questions.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(questions, HttpStatus.OK);
     }
 
     @GetMapping("/{questionId}")
@@ -147,31 +163,7 @@ public class QuestionController {
         try {
             List<Question> questions =
                     new ArrayList<>(questionRepository.findByCreatedBy(userId));
-            Map<Long, Long> questionIdAnswerCountsMap = answerService.getAnswerCounts(
-                    questions.stream()
-                            .map(Question::getQuestionId)
-                            .collect(Collectors.toList())
-            );
-            Map<Long, Long> questionIdVoteCountsMap = voteService.getVoteCounts(
-                    questions.stream()
-                            .map(Question::getQuestionId)
-                            .collect(Collectors.toList())
-            );
-            questions = questions
-                    .stream()
-                    .peek(question -> {
-                                long answersCount = questionIdAnswerCountsMap.get(question.getQuestionId());
-                                long votesCount = questionIdVoteCountsMap.get(question.getQuestionId());
-                                question.setAnswersCount(answersCount);
-                                question.setVotesCount(votesCount);
-                            }
-                    )
-                    .collect(Collectors.toList());
-
-            if (questions.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(questions, HttpStatus.OK);
+            return getResponseEntityOfQuestionList(questions);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
