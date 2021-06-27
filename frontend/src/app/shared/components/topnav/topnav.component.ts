@@ -19,7 +19,7 @@ export class TopnavComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.facadeService.userService.getCurrentUser().subscribe(user => {
+    this.facadeService.userService.currentUser.forEach(user => {
       if ((user || {}).id) {
         this.isAuthenticated = true;
         this.user = user;

@@ -12,7 +12,8 @@ export class AddQuestionComponent implements OnInit {
 
   newQuestionTitle: string;
   newQuestionText: string;
-  loggedInUser: User = null;
+  user: User = null;
+  isAuthenticated = false;
   loaded = true;
 
   constructor(
@@ -21,16 +22,22 @@ export class AddQuestionComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-      this.facadeService.userService.getCurrentUser().subscribe(user => {
-        this.loggedInUser = user;
-      });
+    this.facadeService.userService.currentUser.subscribe(user => {
+      if ((user || {}).id) {
+        this.isAuthenticated = true;
+        this.user = user;
+      }else{
+        this.isAuthenticated = false;
+        this.user = null;
+      }
+    });
   }
 
   onSubmit(): void {
-    if ((this.loggedInUser || {}).id){
+    if ((this.user || {}).id){
       this.loaded = false;
       this.facadeService.questionService.submitQuestion(
-        this.loggedInUser.id,
+        this.user.id,
         this.newQuestionTitle,
         this.newQuestionText
       ).subscribe(newQuestion => {

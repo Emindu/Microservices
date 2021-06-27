@@ -14,7 +14,8 @@ export class PostComponent implements OnInit {
 
   @Input() post: Post;
   voteState: vote_state_t = 0;
-  loggedInUser: User;
+  loggedInUser: User = null;
+  isAuthenticated = false;
   loaded = true;
 
   constructor(
@@ -24,9 +25,9 @@ export class PostComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.facadeService.userService.getCurrentUser().subscribe(
+    this.facadeService.userService.currentUser.subscribe(
       user => {
-        this.loggedInUser = user;
+
         if ((user || {}).id && (this.post || {}).id ) {
           this.facadeService.voteService.getPostVoteStateOfPostForUser(this.post, user.id).subscribe(
             voteState => {
@@ -36,6 +37,11 @@ export class PostComponent implements OnInit {
               console.log(error);
             }
           );
+          this.loggedInUser = user;
+          this.isAuthenticated = true;
+        }else{
+          this.loggedInUser = null;
+          this.isAuthenticated = false;
         }
       },
       error => {
@@ -70,7 +76,7 @@ export class PostComponent implements OnInit {
     if (!this.loaded) {
       return;
     }
-    if (!this.loggedInUser) {
+    if (!this.isAuthenticated) {
       this.navigateToSignIn();
     }else{
       this.loaded = false;
@@ -86,7 +92,7 @@ export class PostComponent implements OnInit {
     if (!this.loaded) {
       return;
     }
-    if (!this.loggedInUser) {
+    if (!this.isAuthenticated) {
       this.navigateToSignIn();
     }else{
       this.loaded = false;
