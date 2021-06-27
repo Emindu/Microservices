@@ -34,6 +34,8 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .authorizeRequests().antMatchers("/login").permitAll()
                 .antMatchers("/api/user-service/users").permitAll()
+                .antMatchers("/api/question-service/questions").permitAll()
+                .antMatchers("**").permitAll() //todo: remove
                 .anyRequest().authenticated()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().cors().disable();
