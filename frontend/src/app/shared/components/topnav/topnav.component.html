@@ -4,24 +4,27 @@
       QnA Site
     </a>
   </div>
-  <div class="btn">
+  <div class="btn" *ngIf="isAuthenticated">
     <button>
       <a routerLink="/new">
         Ask Question
       </a>
     </button>
   </div>
-  <ng-container *ngIf="!user">
+  <ng-container>
     <div class="btn">
-      <button>
+      <button *ngIf="!isAuthenticated" >
         <a routerLink="/auth/signIn">
           Sign In
         </a>
       </button>
+      <button *ngIf="isAuthenticated" (click)="signOut()">
+          Sign Out
+      </button>
     </div>
   </ng-container>
 
-  <ng-container *ngIf="user">
+  <ng-container *ngIf="isAuthenticated">
     <div class="user">
       <a [routerLink]="'/user/'+ user.id">
         <span class="name">{{ user.fullName }}</span>
