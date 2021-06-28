@@ -13,7 +13,7 @@ public class Answer {
     @Column(name = "question_id")
     private long questionId;
 
-    @Column(name = "text")
+    @Column(name = "text", length = 2000)
     private String text;
 
     @Column(name = "created_by")
