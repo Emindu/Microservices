@@ -25,6 +25,9 @@ public class UserServiceApplication {
                 ),
                 new User(
                         "Tharaka Amarathunga", "Sri Lanka", 30
+                ),
+                new User(
+                        "John Watson", "Sri Lanka", 45
                 )
         ).forEach(repository::save);
     }
