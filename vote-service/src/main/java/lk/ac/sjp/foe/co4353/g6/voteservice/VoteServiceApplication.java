@@ -24,10 +24,41 @@ public class VoteServiceApplication {
     @Bean
     ApplicationRunner init(AnswerVotesRepository repository) {
         return args -> Stream.of(
-                new AnswerVote( 1, 1 , 1
+                new AnswerVote(
+                        1, 2 , 1
                 ),
                 new AnswerVote(
-                   2 , 2 , 2
+                        1 , 3 , 0
+                ),
+                new AnswerVote(
+                        2, 1 , 1
+                ),
+                new AnswerVote(
+                        2 , 3 , 1
+                ),
+                new AnswerVote(
+                        3, 1 , -1
+                ),
+                new AnswerVote(
+                        3, 2 , -1
+                ),
+                new AnswerVote(
+                        4, 2 , 1
+                ),
+                new AnswerVote(
+                        4 , 3 , 0
+                ),
+                new AnswerVote(
+                        5, 1 , 1
+                ),
+                new AnswerVote(
+                        5 , 3 , 1
+                ),
+                new AnswerVote(
+                        6, 1 , 0
+                ),
+                new AnswerVote(
+                        6, 2 , -1
                 )
         ).forEach(repository::save);
     }
@@ -35,10 +66,23 @@ public class VoteServiceApplication {
     @Bean
     ApplicationRunner init2(QuestionVotesRepository repository) {
         return args -> Stream.of(
-                new QuestionVote( 1, 1 , 10
+                new QuestionVote(
+                        2, 2 , 1
                 ),
                 new QuestionVote(
-                        2 , 2 , 11
+                        2 , 3 , 0
+                ),
+                new QuestionVote(
+                        3, 1 , 1
+                ),
+                new QuestionVote(
+                        3 , 3 , 1
+                ),
+                new QuestionVote(
+                        1, 1 , -1
+                ),
+                new QuestionVote(
+                        1, 2 , -1
                 )
         ).forEach(repository::save);
     }

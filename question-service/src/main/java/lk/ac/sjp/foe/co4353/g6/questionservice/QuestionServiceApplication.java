@@ -37,8 +37,16 @@ public class QuestionServiceApplication {
                 new Question(
                         "What is the difference between public, protected, package-private and private in Java?",
                         "In Java, are there clear rules on when to use each of access modifiers, namely the default (package private), public, protected and private, while making class and interface and dealing with inheritance?",
-                        1L,
-                        1L,
+                        2L,
+                        2L,
+                        new Date(),
+                        new Date()
+                ),
+                new Question(
+                        "What is the best programming language?",
+                        "I'm thinking of learning many, but, what is the best programming language?",
+                        3L,
+                        3L,
                         new Date(),
                         new Date()
                 )
