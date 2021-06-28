@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import {User} from "../../../core/models/User";
-import {FacadeService} from "../../../core/services/facade.service";
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {User} from '../../../core/models/User';
+import {FacadeService} from '../../../core/services/facade.service';
 
 @Component({
   selector: 'app-topnav',
@@ -10,13 +10,33 @@ import {FacadeService} from "../../../core/services/facade.service";
 export class TopnavComponent implements OnInit {
 
   user: User = null;
+  isAuthenticated = false;
 
-  constructor(private facadeService: FacadeService) { }
+  constructor(
+    private facadeService: FacadeService,
+    private changeDetectRef: ChangeDetectorRef
+  ) { }
 
   ngOnInit(): void {
-    this.facadeService.userService.getCurrentUser().subscribe(user => {
-      this.user = user;
+
+    this.facadeService.userService.currentUser.forEach(user => {
+      if ((user || {}).id) {
+        this.isAuthenticated = true;
+        this.user = user;
+      }else{
+        this.isAuthenticated = false;
+        this.user = null;
+      }
+      this.changeDetectRef.markForCheck();
     });
+
+  }
+
+  signOut(): void {
+      this.facadeService.userService.purgeAuth();
+      this.isAuthenticated = false;
+      this.user = null;
+      this.changeDetectRef.markForCheck();
   }
 
 }

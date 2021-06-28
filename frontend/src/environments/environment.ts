@@ -2,15 +2,17 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
-const API_GATETEWAY = 'http://localhost:8080/api';
+const API_BASE = 'http://localhost:8080';
+const API_GATEWAY = `${API_BASE}/api`;
 
 export const environment = {
   production: false,
-  API_GATETEWAY_SERVICE: API_GATETEWAY,
-  API_USER_SERVICE: `${API_GATETEWAY}/user-service`,
-  API_QUESTION_SERVICE: `${API_GATETEWAY}/question-service`,
-  API_ANSWER_SERVICE: `${API_GATETEWAY}/answer-service`,
-  API_VOTE_SERVICE: `${API_GATETEWAY}/vote-service`,
+  API_BASE,
+  API_GATEWAY_SERVICE: API_GATEWAY,
+  API_USER_SERVICE: `${API_GATEWAY}/user-service`,
+  API_QUESTION_SERVICE: `${API_GATEWAY}/question-service`,
+  API_ANSWER_SERVICE: `${API_GATEWAY}/answer-service`,
+  API_VOTE_SERVICE: `${API_GATEWAY}/vote-service`,
 };
 
 /*

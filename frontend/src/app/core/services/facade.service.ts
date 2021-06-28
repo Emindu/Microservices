@@ -1,18 +1,23 @@
 import {Injectable, Injector, Type} from '@angular/core';
-import {AnswerService} from "./answer.service";
-import {QuestionService} from "./question.service";
-import {UserService} from "./user.service";
-import {VoteService} from "./vote.service";
+import {AnswerService} from './answer.service';
+import {QuestionService} from './question.service';
+import {UserService} from './user.service';
+import {VoteService} from './vote.service';
+import {AuthService} from './auth.service';
+import {JwtService} from './jwt.service';
 
 @Injectable({
   providedIn: 'root'
 })
+// tslint:disable:variable-name
 export class FacadeService {
 
   private _answerService: AnswerService;
   private _questionService: QuestionService;
   private _userService: UserService;
   private _voteService: VoteService;
+  private _authService: AuthService;
+  private _jwtService: JwtService;
 
   constructor(private injector: Injector) { }
 
@@ -42,5 +47,19 @@ export class FacadeService {
     this._voteService = this.injector.get<VoteService>(VoteService as Type<VoteService>);
   }
     return this._voteService;
+  }
+
+  get authService(): AuthService {
+    if (!this._authService) {
+      this._authService = this.injector.get<AuthService>(AuthService as Type<AuthService>);
+    }
+    return this._authService;
+  }
+
+  get jwtService(): JwtService {
+    if (!this._jwtService) {
+      this._jwtService = this.injector.get<JwtService>(JwtService as Type<JwtService>);
+    }
+    return this._jwtService;
   }
 }

@@ -6,9 +6,10 @@ import { AppComponent } from './app.component';
 import { HomeModule } from './modules/home/home.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { HttpClientModule } from '@angular/common/http';
-import {SharedModule} from "./shared/shared.module";
-import {AuthModule} from "./modules/auth/auth.module";
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {SharedModule} from './shared/shared.module';
+import {AuthModule} from './modules/auth/auth.module';
+import {AuthTokenInterceptor} from './core/interceptors/auth-token.interceptor';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,9 @@ import {AuthModule} from "./modules/auth/auth.module";
     BrowserAnimationsModule,
     SharedModule
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptor, multi: true },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

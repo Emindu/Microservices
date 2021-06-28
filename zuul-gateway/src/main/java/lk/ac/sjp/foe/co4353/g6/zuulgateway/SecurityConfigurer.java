@@ -4,6 +4,7 @@ import lk.ac.sjp.foe.co4353.g6.zuulgateway.filters.JWTRequestFilter;
 import lk.ac.sjp.foe.co4353.g6.zuulgateway.services.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,9 +33,13 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
-                .authorizeRequests().antMatchers("/login").permitAll()
-                .antMatchers("/api/user-service/users").permitAll()
-                .anyRequest().authenticated()
+                .authorizeRequests()
+                .antMatchers("/login").permitAll()
+                .antMatchers("/user").permitAll()
+                .antMatchers(HttpMethod.POST,"/api/answer-service/answer").authenticated()
+                .antMatchers(HttpMethod.POST,"/api/question-service/questions/").authenticated()
+                .antMatchers(HttpMethod.POST,"/api/vote-service/votes/vote/**").authenticated()
+                .anyRequest().permitAll()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().cors().disable();
 

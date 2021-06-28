@@ -1,17 +1,27 @@
 import { Injectable } from '@angular/core';
-import {Observable, of} from 'rxjs';
+import {BehaviorSubject,  Observable, of, ReplaySubject, zip} from 'rxjs';
 import {User} from '../models/User';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
-import {map} from 'rxjs/operators';
+import {catchError, distinctUntilChanged, map, mergeMap} from 'rxjs/operators';
 import {mapToUser, UserDto} from '../dto/UserDto';
+import {FacadeService} from './facade.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
 
-  constructor(private http: HttpClient) { }
+  private currentUserSubject = new BehaviorSubject<User>({} as User);
+  public currentUser = this.currentUserSubject.asObservable().pipe(distinctUntilChanged());
+
+  private isAuthenticatedSubject = new ReplaySubject<boolean>(1);
+  public isAuthenticated = this.isAuthenticatedSubject.asObservable();
+
+  constructor(
+    private http: HttpClient,
+    private facadeService: FacadeService
+  ) { }
 
   getUsersById(userIds: number[]): Observable<User[]> {
     if ( (userIds || []).length === 0 ){
@@ -44,7 +54,60 @@ export class UserService {
   }
 
   getCurrentUser(): Observable<User> {
-    return this.getUser(1); // todo
+    return of(this.currentUserSubject.value);
   }
 
+  populate(): void {
+    const jwt = this.facadeService.jwtService.getToken();
+    if (jwt) {
+      this.facadeService.authService.getUser(jwt).pipe(
+        map(data => data.username),
+        mergeMap(username => this.facadeService.userService.getUser(username))
+      )
+        .subscribe(
+          user => this.setAuth(user, jwt),
+          err => {
+            console.log(err);
+            this.purgeAuth();
+          }
+        );
+    } else {
+      this.purgeAuth();
+    }
+  }
+
+  setAuth(user: User, token: string): void {
+    this.facadeService.jwtService.saveToken(token);
+    this.currentUserSubject.next(user);
+    this.isAuthenticatedSubject.next(true);
+  }
+
+  purgeAuth(): void {
+    this.facadeService.jwtService.destroyToken();
+    this.currentUserSubject.next({} as User);
+    this.isAuthenticatedSubject.next(false);
+  }
+
+  attemptAuth(username: string, password: string): Observable<boolean>{
+      return this.facadeService.authService.login(username, password)
+      .pipe(
+        map(data => data.jwt),
+        mergeMap(jwt => zip(
+          this.facadeService.userService.getUser(username), of(jwt)
+        )),
+        map(
+          ([user, jwt]) => {
+            this.setAuth(user, jwt);
+            return true;
+          },
+        ),
+        catchError(
+          err => {
+            console.log(err);
+            this.purgeAuth();
+            return of(false);
+          }
+        )
+      );
+  }
 }

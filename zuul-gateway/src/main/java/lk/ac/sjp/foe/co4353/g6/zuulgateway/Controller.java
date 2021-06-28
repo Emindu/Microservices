@@ -2,6 +2,8 @@ package lk.ac.sjp.foe.co4353.g6.zuulgateway;
 
 import lk.ac.sjp.foe.co4353.g6.zuulgateway.model.AuthenticationRequest;
 import lk.ac.sjp.foe.co4353.g6.zuulgateway.model.AuthenticationResponse;
+import lk.ac.sjp.foe.co4353.g6.zuulgateway.model.User;
+import lk.ac.sjp.foe.co4353.g6.zuulgateway.model.UserJwtPayload;
 import lk.ac.sjp.foe.co4353.g6.zuulgateway.services.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,14 +18,17 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*")
 public class Controller {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    private MyUserDetailsService userDetailsService;
+    private final MyUserDetailsService userDetailsService;
 
-    @Autowired
-    private JWTTokenUtil jwtTokenUtil;
+    private final JWTTokenUtil jwtTokenUtil;
+
+    public Controller(AuthenticationManager authenticationManager, MyUserDetailsService userDetailsService, JWTTokenUtil jwtTokenUtil) {
+        this.authenticationManager = authenticationManager;
+        this.userDetailsService = userDetailsService;
+        this.jwtTokenUtil = jwtTokenUtil;
+    }
 
     @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody AuthenticationRequest authenticationRequest) throws Exception{
@@ -40,4 +45,13 @@ public class Controller {
         final String jwt = jwtTokenUtil.generateToken(userDetails);
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
+
+
+    @PostMapping("user")
+    public ResponseEntity<User> user(@RequestBody UserJwtPayload userJwtPayload){
+        final String username = jwtTokenUtil.extractUsername(userJwtPayload.getJwt());
+        return ResponseEntity.ok(new User(username));
+    }
+
+
 }
